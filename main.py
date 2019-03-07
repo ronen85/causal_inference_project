@@ -6,12 +6,13 @@ from sklearn.linear_model import LogisticRegression
 import csv
 import requests
 import lxml.html as lh
+from Observation import *
 
 ids = ["200827384", "034749473"]
 
 
 def get_participants_from_web():
-    url ='https://en.wikipedia.org/wiki/All-time_table_of_the_FIFA_World_Cup'
+    url = 'https://en.wikipedia.org/wiki/All-time_table_of_the_FIFA_World_Cup'
     page = requests.get(url)
     doc = lh.fromstring(page.content)
     tr_elements = doc.xpath('//tr')
@@ -34,7 +35,6 @@ def get_participants_from_web():
 
 
 if __name__ == "__main__":
-
     WC_years = [1982, 1986, 1990, 1994, 1998, 2002, 2006, 2010, 2014]
     WC_hosts = ["Spain", "Mexico", "Italy", "United States", "France", "Japan", "Germany", "South Africa", "Brazil"]
     WC_dict = dict(zip(WC_years, WC_hosts))
@@ -50,19 +50,26 @@ if __name__ == "__main__":
     who_countries = set(df["country"])
     countries = who_countries.intersection(WC_participants)
     """add countries that were removed due to different spelling between the lists"""
-    temp = {'Switzerland','United States of America', 'Russian Federation', 'Iran (Islamic Rep of)',
-                'Republic of Korea'}
+    temp = {'Switzerland', 'United States of America', 'Russian Federation', 'Iran (Islamic Rep of)',
+            'Republic of Korea'}
     countries = countries.union(temp)
 
+    """Test case """
+    WC_suicide_dict = {}
+    country = 'Germany'
+    year = '1994'
 
-    country_dfs = {}
-    for c in countries:
-        country_dfs[c] = df[df["country"] == c].drop(["country"], axis=1)
+    """check if this information exists"""
+    if df[(df.year == int(year)-2) & (df.country == country)].__len__():
+        """create Observation object"""
+        WC_suicide_dict[country + year] = Observation(df, country, year)
+    WC_suicide_dict[country + year] = 'no_info'
+
+    # country_dfs = {}
+    # for c in countries:
+    #     country_dfs[c] = df[df["country"] == c].drop(["country"], axis=1)
 
     # ----------------------- PREPROCESSING ----------------------- #
-
-
-
 
 """
 Treatments:
