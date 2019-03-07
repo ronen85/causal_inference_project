@@ -63,7 +63,12 @@ if __name__ == "__main__":
     if df[(df.year == int(year)-2) & (df.country == country)].__len__():
         """create Observation object"""
         WC_suicide_dict[country + year] = Observation(df, country, year)
-    WC_suicide_dict[country + year] = 'no_info'
+    else:
+        WC_suicide_dict[country + year] = 'no_info'
+
+    WC_suicide_dict[country + year].get_suicide_num(int(year), ['15-24 years', '25-34 years'])
+    WC_suicide_dict[country + year].get_population(int(year), ['15-24 years'])
+    print()
 
     # country_dfs = {}
     # for c in countries:
