@@ -37,15 +37,15 @@ class Observation:
         for year in self.info_per_year:
             population = self.get_population(year, age, sex)
             suicide_num = self.get_suicide_num(year, age, sex)
-            try:  # requires preprocessing of WHO database
-                suicide_ratio_per_year[year] = suicide_num/population
-            except:
-                print()
+            if population and suicide_num:
+                try:  # requires preprocessing of WHO database
+                    suicide_ratio_per_year[year] = suicide_num/population
+                except:
+                    print()
 
-        num_list = list(suicide_ratio_per_year.values())
-        wc_ratio = num_list[2]
-        del num_list[2]
-        avg = sum(num_list)/4
+        wc_ratio = suicide_ratio_per_year[int(self.WC_year)]
+        ratio_list = [suicide_ratio_per_year[x] for x in suicide_ratio_per_year if x != self.WC_year]
+        avg = sum(ratio_list)/len(ratio_list)
 
         return suicide_ratio_per_year, avg-wc_ratio
 

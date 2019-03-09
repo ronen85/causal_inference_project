@@ -57,15 +57,22 @@ if __name__ == "__main__":
 
     # ----------------------PREPROCESSING---------------------------------
     """Preprocessing: remove NaN and years where country has 0 population"""
+
+    #TODO: for now-> remove these rows
+    """question: how to deal with rows where there is no:
+        1) population
+        2) suicide number
+        3) both
+    and how this affects the neighboring years?"""
     clean_nan(df)
-    print()
 
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
     WC_suicide_dict = {}
 
     for year in WC_years:
         for country in countries:
-            if df[(df.year == int(year) - 2) & (df.country == country)].__len__():
+            """check if the database holds at lease 4 of the required years (including the WC one)"""
+            if check_years(df, year, country):
                 """create Observation object"""
                 WC_suicide_dict[country + year] = Observation(df, country, year)
             else:
