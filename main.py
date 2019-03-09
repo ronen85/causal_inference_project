@@ -7,6 +7,7 @@ import csv
 import requests
 import lxml.html as lh
 from Observation import *
+from preprocessing import *
 
 ids = ["200827384", "034749473"]
 
@@ -35,7 +36,7 @@ def get_participants_from_web():
 
 
 if __name__ == "__main__":
-    WC_years = [1982, 1986, 1990, 1994, 1998, 2002, 2006, 2010, 2014]
+    WC_years = ['1982', '1986', '1990', '1994', '1998', '2002', '2006', '2010', '2014']
     WC_hosts = ["Spain", "Mexico", "Italy", "United States", "France", "Japan", "Germany", "South Africa", "Brazil"]
     WC_dict = dict(zip(WC_years, WC_hosts))
 
@@ -54,27 +55,38 @@ if __name__ == "__main__":
             'Republic of Korea'}
     countries = countries.union(temp)
 
-    """Test case """
-    WC_suicide_dict = {}
-    country = 'Germany'
-    year = '1994'
-
-    """check if this information exists"""
-    if df[(df.year == int(year)-2) & (df.country == country)].__len__():
-        """create Observation object"""
-        WC_suicide_dict[country + year] = Observation(df, country, year)
-    else:
-        WC_suicide_dict[country + year] = 'no_info'
-
-    WC_suicide_dict[country + year].get_suicide_num(int(year), ['15-24 years', '25-34 years'])
-    WC_suicide_dict[country + year].get_population(int(year), ['15-24 years'])
+    # ----------------------PREPROCESSING---------------------------------
+    """Preprocessing: remove NaN and years where country has 0 population"""
+    clean_nan(df)
     print()
 
-    # country_dfs = {}
-    # for c in countries:
-    #     country_dfs[c] = df[df["country"] == c].drop(["country"], axis=1)
+    # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
+    WC_suicide_dict = {}
 
-    # ----------------------- PREPROCESSING ----------------------- #
+    for year in WC_years:
+        for country in countries:
+            if df[(df.year == int(year) - 2) & (df.country == country)].__len__():
+                """create Observation object"""
+                WC_suicide_dict[country + year] = Observation(df, country, year)
+            else:
+                WC_suicide_dict[country + year] = 'no_info'
+    print()
+
+    # -------------------------------------------------------
+    """Test case """
+    # country = 'Germany'
+    # year = '1994'
+    #
+    # """check if this information exists"""
+    # if df[(df.year == int(year)-2) & (df.country == country)].__len__():
+    #     """create Observation object"""
+    #     WC_suicide_dict[country + year] = Observation(df, country, year)
+    # else:
+    #     WC_suicide_dict[country + year] = 'no_info'
+    #
+    # WC_suicide_dict[country + year].get_suicide_num(int(year), ['15-24 years', '25-34 years'])
+    # WC_suicide_dict[country + year].get_population(int(year), ['15-24 years'])
+    # -------------------------------------------------------
 
 """
 Treatments:
