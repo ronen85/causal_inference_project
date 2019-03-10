@@ -7,27 +7,12 @@ import csv
 import requests
 
 import lxml.html as lh
+from utilities import *
 from Observation import *
 from visualization import *
 from preprocessing import *
 
 ids = ["200827384", "034749473"]
-visualize = False
-
-WC_years = ['1982', '1986', '1990', '1994', '1998', '2002', '2006', '2010', '2014']
-WC_hosts = ["Spain", "Mexico", "Italy", "United States", "France", "Japan", "Germany", "South Africa", "Brazil"]
-WC_finals = {
-    1982: ['Italy', 'Germany', 'Poland', 'France'],
-    1986: ['Argentina', 'Germany', 'France', 'Belgium'],
-    1990: ['Germany', 'Argentina', 'Italy', 'England'],
-    1994: ['Brazil', 'Italy', 'Sweden', 'Bulgaria'],
-    1998: ['Brazil', 'France', 'Netherlands', 'Croatia'],
-    2002: ['Germany', 'Brazil', 'South Korea', 'Turkey'],
-    2006: ['Italy', 'France', 'Germany', 'Portugal'],
-    2010: ['Netherlands', 'Spain', 'Uruguay', 'Germany'],
-    2014: ['Germany', 'Argentina', 'Brazil', 'Netherlands'],
-}
-WC_dict = zip(WC_years, WC_hosts)
 
 
 def get_participants_from_web():
@@ -117,7 +102,7 @@ if __name__ == "__main__":
     if visualize:
         graphs_all_country(new_df, countries)
 
-    graphs_by_country(new_df, 'France', 'male')
+    graphs_by_country(new_df, 'Brazil', 'male')
 
 
 
