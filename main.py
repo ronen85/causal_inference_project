@@ -70,6 +70,7 @@ if __name__ == "__main__":
     added_by_hand = {'Switzerland', 'United States of America', 'Russian Federation', 'Iran (Islamic Rep of)',
             'Republic of Korea'}
     countries = countries.union(added_by_hand)
+    df = df[df.country.isin(countries)]
 
     # ----------------------PREPROCESSING---------------------------------
     """Preprocessing: remove NaN and years where country has 0 population"""
@@ -87,8 +88,6 @@ if __name__ == "__main__":
     df['suicide_ratio'] = (df.suicides_no / df.population) * 10000
     new_df = df.drop(columns=['population', 'suicides_no'])
     new_df['is_WC_year'] = df.year.isin(WC_years)
-    # new_df['is_host'] = (new_df['is_WC_year']) & (new_df['country'])
-    # new_df['is_host'] = new_df['is_WC_year'].apply(lambda x: x.is_integer())
     new_df['is_host'] = False
     new_df['in_finals'] = False
     for year,host in WC_dict:
@@ -102,10 +101,10 @@ if __name__ == "__main__":
 
 
     # ----------------------SPLITTING DATAFRAMES---------------------------------
-    df_male = df[df.sex == 'male']
-    df_female = df[df.sex == 'female']
+    df_male = new_df[new_df.sex == 'male']
+    df_female = new_df[new_df.sex == 'female']
 
-    age_groups = set(df["age"])
+    age_groups = set(new_df["age"])
     df_male_by_age = {}
     df_female_by_age = {}
     for age in age_groups:
@@ -116,7 +115,9 @@ if __name__ == "__main__":
     # ----------------------OBTAINING COUNTRY GRAPHS---------------------------------
 
     if visualize:
-        graphs_by_country(df, countries)
+        graphs_all_country(new_df, countries)
+
+    graphs_by_country(new_df, 'France', 'male')
 
 
 
