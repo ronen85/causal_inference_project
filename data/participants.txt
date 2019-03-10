@@ -1,0 +1,36 @@
+# World Cup 1982 Spain 13 June - 11 July
+
+("Poland", "Italy", "Cameroon", "Peru", "Belgium", "Argentina", "Hungary" , "El Salvador", "England", "France", "Czechoslovakia", "Kuwait", "Brazil", "Soviet Union", "Scotland", "New Zealand", "NorthernIreland", "Spain", "Yugoslavia", "Honduras", "West Germany", "Austria" , "Algeria" , "Chile")
+
+# World Cup 1986 Mexico, 31 May-29 June
+
+("Argentina", "Italy", "Bulgaria", "South Korea", "Mexico", "Paraguay", "Belgium", "Iraq", "Brazil", "Spain" , "Northern Ireland", "Algeria", "Morocco", "England", "Poland", "Portugal", "Denmark", "West Germany", "Uruguay", "Scotland", "Soviet Union", "France", "Hungary", "Canada")
+
+# World Cup 1990 Italy, 8 June - 8 July 1990
+
+("Italy" , "Czechoslovakia" , "Austria", "United States", "Cameroon", "Romania", "Argentina", "Soviet Union", "Brazil", "Costa Rica", "Scotland" , "Sweden", "West Germany" , "Yugoslavia" , "Colombia" , "United Arab Emirates", "Spain" , "Belgium", "Uruguay", "South Korea", "England" , "Ireland", "Netherlands", "Egypt")
+
+# World Cup 1994 United States, 17 June - 17 July 1994
+
+("Romania", "Switzerland", "United States", "Colombia", "Brazil" , "Sweden" , "Russia" , "Cameroon", "Germany", "Spain", "South Korea", "Bolivia", "Nigeria", "Bulgaria" , "Argentina", "Greece", "Mexico" , "Ireland", "Italy", "Norway", "Netherlands", "Saudi Arabia" , "Belgium", "Morocco")
+
+# World Cup 1998 France, 10 June - 12 July
+
+("Brazil", "Norway", "Morocco", "Scotland", "Italy", "Chile" , "Austria", "Cameroon", "France" , "Denmark" , "South Africa" , "Saudi Arabia", "Nigeria", "Paraguay", "Spain", "Bulgaria", "Netherlands", "Mexico", "Belgium", "South Korea", "Germany", "Yugoslavia", "Iran" , "United States", "Romania", "England" , "Colombia" , "Tunisia", "Argentina", "Croatia" , "Jamaica", "Japan")
+
+# World Cup 2002 Korea n Japan, 31 May - 30 June
+
+("Denmark", "Senegal", "Uruguay", "France", "Spain", "Paraguay" , "South Africa" , "Slovenia", "Brazil" , "Turkey" , "Costa Rica" , "China", "South Korea", "United States", "Portugal" , "Poland", "Germany", "Ireland", "Cameroon" , "Saudi Arabia", "Sweden" , "England", "Argentina", "Nigeria", "Mexico" , "Italy", "Croatia", "Ecuador", "Japan", "Belgium", "Russia" , "Tunisia")
+
+# World Cup 2006 Germany / Deutschland
+
+("Germany", "Ecuador" , "Poland", "Costa Rica", "England", "Sweden", "Paraguay", "Trinidad and Tobago", "Argentina", "Netherlands" , "Ivory Coast" , "Serbia and Montenegro", "Portugal" , "Mexico", "Angola", "Iran", "Italy", "Ghana" , "Czech Republic", "United States", "Brazil" , "Australia" , "Croatia" , "Japan", "Switzerland", "France", "South Korea" , "Togo", "Spain", "Ukraine" , "Tunisia" , "Saudi Arabia")
+
+# World Cup 2010 South Africa
+
+("South Africa", "Mexico", "Uruguay", "France", "Argentina" , "Nigeria" , "South Korea", "Greece", "England" , "United States" , "Algeria", "Slovenia", "Germany" , "Australia" , "Serbia" , "Ghana", "Netherlands" , "Denmark" , "Japan", "Cameroon", "Italy" , "Paraguay", "New Zealand", "Slovakia", "Brazil", "NorthKorea" , "Ivory Coast", "Portugal", "Spain" , "Switzerland" , "Honduras" , "Chile")
+
+# World Cup 2014 Brazil
+
+("Brazil" , "Croatia", "Mexico" , "Cameroon", "Spain", "Netherlands", "Chile", "Australia", "Colombia" , "Greece" , "Ivory Coast", "Japan", "Uruguay", "Costa Rica" , "England", "Italy", "Switzerland", "Ecuador", "France" , "Honduras", "Argentina", "Bosnia-Herzegovina" , "Iran" , "Nigeria", "Germany", "Portugal" , "Ghana", "United States", "Belgium", "Algeria", "Russia" , "South Korea")
+

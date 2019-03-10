@@ -1,4 +1,4 @@
-
+participants_dict = {}
 
 def clean_nan(df):
     df.dropna(subset=['population', 'suicides_no'], inplace=True)
