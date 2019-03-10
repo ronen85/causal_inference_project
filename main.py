@@ -90,10 +90,16 @@ if __name__ == "__main__":
     # new_df['is_host'] = (new_df['is_WC_year']) & (new_df['country'])
     # new_df['is_host'] = new_df['is_WC_year'].apply(lambda x: x.is_integer())
     new_df['is_host'] = False
+    new_df['in_finals'] = False
     for year,host in WC_dict:
-        idx = new_df[(new_df.year == int(year)) & (new_df.country == host)].index.values
-        if len(idx):
-            new_df.loc[idx[0]:idx[-1], :].is_host = True
+        idx1 = new_df[(new_df.year == int(year)) & (new_df.country == host)].index.values
+        if len(idx1):
+            new_df.loc[idx1[0]:idx1[-1], :].is_host = True
+        idx2 = new_df[(new_df.year == int(year)) & (new_df.country.isin(WC_finals[int(year)]))].index.values
+        if len(idx2):
+            for i in idx2:
+                new_df.at[i,'in_finals'] = True
+
 
     # ----------------------SPLITTING DATAFRAMES---------------------------------
     df_male = df[df.sex == 'male']
