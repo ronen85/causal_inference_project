@@ -38,6 +38,8 @@ def get_participants_from_web():
     return set(participants)
 
 
+
+
 if __name__ == "__main__":
     WC_years = ['1982', '1986', '1990', '1994', '1998', '2002', '2006', '2010', '2014']
     WC_hosts = ["Spain", "Mexico", "Italy", "United States", "France", "Japan", "Germany", "South Africa", "Brazil"]
