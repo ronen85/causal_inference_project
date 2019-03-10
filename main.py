@@ -5,11 +5,14 @@ from sklearn import linear_model
 from sklearn.linear_model import LogisticRegression
 import csv
 import requests
+
 import lxml.html as lh
 from Observation import *
+from visualization import *
 from preprocessing import *
 
 ids = ["200827384", "034749473"]
+visualize = False
 
 
 def get_participants_from_web():
@@ -51,9 +54,21 @@ if __name__ == "__main__":
     who_countries = set(df["country"])
     countries = who_countries.intersection(WC_participants)
     """add countries that were removed due to different spelling between the lists"""
-    temp = {'Switzerland', 'United States of America', 'Russian Federation', 'Iran (Islamic Rep of)',
+    added_by_hand = {'Switzerland', 'United States of America', 'Russian Federation', 'Iran (Islamic Rep of)',
             'Republic of Korea'}
-    countries = countries.union(temp)
+    countries = countries.union(added_by_hand)
+
+    # ----------------------SPLITTING DATAFRAMES---------------------------------
+    df_male = df[df.sex == 'male']
+    df_female = df[df.sex == 'female']
+
+    age_groups = set(df["age"])
+    df_male_by_age = {}
+    df_female_by_age = {}
+    for age in age_groups:
+        df_male_by_age[age] = df_male[df_male.age == age]
+        df_female_by_age[age] = df_female[df_female.age == age]
+    print()
 
     # ----------------------PREPROCESSING---------------------------------
     """Preprocessing: remove NaN and years where country has 0 population"""
@@ -65,6 +80,13 @@ if __name__ == "__main__":
         3) both
     and how this affects the neighboring years?"""
     clean_nan(df)
+
+    # ----------------------OBTAINING COUNTRY GRAPHS---------------------------------
+
+    if visualize:
+        graphs_by_country(df, countries)
+
+
 
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
     WC_suicide_dict = {}
