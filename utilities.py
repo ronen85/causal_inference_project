@@ -1,7 +1,8 @@
 visualize = False
 
 WC_years = ['1982', '1986', '1990', '1994', '1998', '2002', '2006', '2010', '2014']
-WC_hosts = ["Spain", "Mexico", "Italy", "United States", "France", "Japan", "Germany", "South Africa", "Brazil"]
+WC_hosts = ["Spain", "Mexico", "Italy", "United States of America", "France", "Japan",
+            "Germany", "South Africa", "Brazil"]
 WC_finals = {
     1982: ['Italy', 'Germany', 'Poland', 'France'],
     1986: ['Argentina', 'Germany', 'France', 'Belgium'],
