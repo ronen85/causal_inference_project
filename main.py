@@ -78,11 +78,12 @@ if __name__ == "__main__":
     for year,host in WC_dict:
         idx1 = new_df[(new_df.year == int(year)) & (new_df.country == host)].index.values
         if len(idx1):
-            new_df.loc[idx1[0]:idx1[-1], :].is_host = True
+            for i in idx1:
+                new_df.at[i, 'is_host'] = True
         idx2 = new_df[(new_df.year == int(year)) & (new_df.country.isin(WC_finals[int(year)]))].index.values
         if len(idx2):
             for i in idx2:
-                new_df.at[i,'in_finals'] = True
+                new_df.at[i, 'in_finals'] = True
 
 
     # ----------------------SPLITTING DATAFRAMES---------------------------------
