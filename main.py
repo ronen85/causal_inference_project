@@ -68,6 +68,7 @@ if __name__ == "__main__":
         3) both
     and how this affects the neighboring years?"""
     clean_nan(df)
+    clean_zeros(df)
 
     # ----------------------FEATURE MODIFICATION---------------------------------
     df['suicide_ratio'] = (df.suicides_no / df.population) * 10000
@@ -93,17 +94,6 @@ if __name__ == "__main__":
         df_female_by_age[age] = df_female[df_female.age == age]
     print()
 
-    # ----------------------PREPROCESSING---------------------------------
-    """Preprocessing: remove NaN and years where country has 0 population"""
-
-    #TODO: for now-> remove these rows
-    """question: how to deal with rows where there is no:
-        1) population
-        2) suicide number
-        3) both
-    and how this affects the neighboring years?"""
-    clean_nan(df)
-    clean_zeros(df)
     # ----------------------OBTAINING COUNTRY GRAPHS---------------------------------
 
     if visualize:
