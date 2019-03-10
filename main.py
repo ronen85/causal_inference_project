@@ -80,7 +80,7 @@ if __name__ == "__main__":
         3) both
     and how this affects the neighboring years?"""
     clean_nan(df)
-
+    clean_zeros(df)
     # ----------------------OBTAINING COUNTRY GRAPHS---------------------------------
 
     if visualize:
