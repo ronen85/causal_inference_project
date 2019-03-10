@@ -7,7 +7,6 @@ import csv
 import requests
 
 import lxml.html as lh
-from utilities import *
 from Observation import *
 from visualization import *
 from preprocessing import *
@@ -103,7 +102,7 @@ if __name__ == "__main__":
     if visualize:
         graphs_all_country(new_df, countries)
 
-    graphs_by_country(new_df, 'Brazil', 'male')
+    graphs_by_country(new_df, 'France', 'male')
 
 
 
