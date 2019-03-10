@@ -41,7 +41,7 @@ def get_participants_from_web():
 if __name__ == "__main__":
     WC_years = ['1982', '1986', '1990', '1994', '1998', '2002', '2006', '2010', '2014']
     WC_hosts = ["Spain", "Mexico", "Italy", "United States", "France", "Japan", "Germany", "South Africa", "Brazil"]
-    WC_dict = dict(zip(WC_years, WC_hosts))
+    WC_dict = zip(WC_years, WC_hosts)
 
     """get all countries that participated in WC"""
     WC_participants = get_participants_from_web()
@@ -57,6 +57,29 @@ if __name__ == "__main__":
     added_by_hand = {'Switzerland', 'United States of America', 'Russian Federation', 'Iran (Islamic Rep of)',
             'Republic of Korea'}
     countries = countries.union(added_by_hand)
+
+    # ----------------------PREPROCESSING---------------------------------
+    """Preprocessing: remove NaN and years where country has 0 population"""
+
+    #TODO: for now-> remove these rows
+    """question: how to deal with rows where there is no:
+        1) population
+        2) suicide number
+        3) both
+    and how this affects the neighboring years?"""
+    clean_nan(df)
+
+    # ----------------------FEATURE MODIFICATION---------------------------------
+    df['suicide_ratio'] = (df.suicides_no / df.population) * 10000
+    new_df = df.drop(columns=['population', 'suicides_no'])
+    new_df['is_WC_year'] = df.year.isin(WC_years)
+    # new_df['is_host'] = (new_df['is_WC_year']) & (new_df['country'])
+    # new_df['is_host'] = new_df['is_WC_year'].apply(lambda x: x.is_integer())
+    new_df['is_host'] = False
+    for year,host in WC_dict:
+        idx = new_df[(new_df.year == int(year)) & (new_df.country == host)].index.values
+        if len(idx):
+            new_df.loc[idx[0]:idx[-1], :].is_host = True
 
     # ----------------------SPLITTING DATAFRAMES---------------------------------
     df_male = df[df.sex == 'male']
@@ -89,17 +112,17 @@ if __name__ == "__main__":
 
 
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
-    WC_suicide_dict = {}
-
-    for year in WC_years:
-        for country in countries:
-            """check if the database holds at lease 4 of the required years (including the WC one)"""
-            if check_years(df, year, country):
-                """create Observation object"""
-                WC_suicide_dict[country + year] = Observation(df, country, year)
-            else:
-                WC_suicide_dict[country + year] = 'no_info'
-    print()
+    # WC_suicide_dict = {}
+    #
+    # for year in WC_years:
+    #     for country in countries:
+    #         """check if the database holds at lease 4 of the required years (including the WC one)"""
+    #         if check_years(df, year, country):
+    #             """create Observation object"""
+    #             WC_suicide_dict[country + year] = Observation(df, country, year)
+    #         else:
+    #             WC_suicide_dict[country + year] = 'no_info'
+    # print()
 
     # -------------------------------------------------------
     """Test case """
