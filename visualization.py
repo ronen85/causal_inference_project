@@ -3,10 +3,10 @@ from matplotlib.pylab import plt
 from utilities import *
 
 
-def graphs_all_country(df, countries):
+def graphs_all_country(df):
 
     by_country = {}
-    for country in countries:
+    for country in WC_countries:
         by_age_dict = defaultdict(list)
         years_dict = defaultdict(list)
         country_df = df[df.country == country]

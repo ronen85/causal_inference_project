@@ -4,78 +4,36 @@ import copy
 from sklearn import linear_model
 from sklearn.linear_model import LogisticRegression
 import csv
-import requests
-
-import lxml.html as lh
 from Observation import *
 from visualization import *
 from preprocessing import *
 
 ids = ["200827384", "034749473"]
 
-
-def get_participants_from_web():
-    url = 'https://en.wikipedia.org/wiki/All-time_table_of_the_FIFA_World_Cup'
-    page = requests.get(url)
-    doc = lh.fromstring(page.content)
-    tr_elements = doc.xpath('//tr')
-    flag = False
-    participants = []
-    for j in range(3, 82):
-        # T is our j'th row
-        T = tr_elements[j]
-        # Iterate through each element of the row
-        for t in T.iterchildren():
-            if flag:
-                data = t.text_content()[1:-1]
-                if '[' in data:
-                    data = data[:data.find("[")]
-                participants.append(data)
-                flag = False
-                break
-            flag = True
-    return set(participants)
-
-
-
-if __name__ == "__main__":
-
-    """get all countries that participated in WC"""
-    WC_participants = get_participants_from_web()
+def load_dataframe():
+    """load the dataframe """
 
     """Read the Data"""
     df = pd.read_csv('./data/WHO.csv', header=0)
-
     """Dataframes by country"""
     df["country"] = df["country"].astype('category')
     who_countries = set(df["country"])
     countries = who_countries.intersection(WC_participants)
     """add countries that were removed due to different spelling between the lists"""
     added_by_hand = {'Switzerland', 'United States of America', 'Russian Federation', 'Iran (Islamic Rep of)',
-            'Republic of Korea'}
-    countries = countries.union(added_by_hand)
-    df = df[df.country.isin(countries)]
+                     'Republic of Korea'}
+    WC_countries = countries.union(added_by_hand)
+    return df[df.country.isin(WC_countries)]
 
-    # ----------------------PREPROCESSING---------------------------------
-    """Preprocessing: remove NaN and years where country has 0 population"""
 
-    #TODO: for now-> remove these rows
-    """question: how to deal with rows where there is no:
-        1) population
-        2) suicide number
-        3) both
-    and how this affects the neighboring years?"""
-    clean_nan(df)
-    clean_zeros(df)
-
-    # ----------------------FEATURE MODIFICATION---------------------------------
-    df['suicide_ratio'] = (df.suicides_no / df.population) * 10000
-    new_df = df.drop(columns=['population', 'suicides_no'])
-    new_df['is_WC_year'] = df.year.isin(WC_years)
+def feature_modification(original_df):
+    original_df['suicide_ratio'] = (original_df.suicides_no / original_df.population) * 10000
+    new_df = original_df.drop(columns=['population', 'suicides_no'])
+    new_df['is_WC_year'] = original_df.year.isin(WC_years)
     new_df['is_host'] = False
     new_df['in_finals'] = False
     new_df['participant'] = False
-    for year,host in WC_dict:
+    for year, host in WC_dict:
         idx1 = new_df[(new_df.year == int(year)) & (new_df.country == host)].index.values
         if len(idx1):
             for i in idx1:
@@ -88,27 +46,44 @@ if __name__ == "__main__":
         if len(idx3):
             for i in idx3:
                 new_df.at[i, 'participant'] = True
+    return new_df
 
+
+def split_dataframe(original_df):
+    """split df by: male, female and by age"""
+    df_m = original_df[original_df.sex == 'male']
+    df_f = original_df[original_df.sex == 'female']
+    age_groups = set(original_df["age"])
+    df_m_by_age = {}
+    df_f_by_age = {}
+    for age in age_groups:
+        df_m_by_age[age] = df_m[df_m.age == age]
+        df_f_by_age[age] = df_f[df_f.age == age]
+
+    return df_m, df_f, df_m_by_age, df_f_by_age
+
+
+if __name__ == "__main__":
+
+    df = load_dataframe()
+
+    # ----------------------PREPROCESSING---------------------------------
+    """Preprocessing: remove NaN and years where country has 0 population"""
+    clean_nan(df)
+    clean_zeros(df)
+
+    # ----------------------FEATURE MODIFICATION---------------------------------
+    df = feature_modification(df)
 
     # ----------------------SPLITTING DATAFRAMES---------------------------------
-    df_male = new_df[new_df.sex == 'male']
-    df_female = new_df[new_df.sex == 'female']
-
-    age_groups = set(new_df["age"])
-    df_male_by_age = {}
-    df_female_by_age = {}
-    for age in age_groups:
-        df_male_by_age[age] = df_male[df_male.age == age]
-        df_female_by_age[age] = df_female[df_female.age == age]
-    print()
+    df_male, df_female, df_male_by_age, df_female_by_age = split_dataframe(df)
 
     # ----------------------OBTAINING COUNTRY GRAPHS---------------------------------
 
     if visualize:
-        graphs_all_country(new_df, countries)
+        graphs_all_country(df)
 
-    graphs_by_country(new_df, 'France', 'male')
-
+    graphs_by_country(df, 'France', 'male')
 
 
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------

@@ -1,5 +1,8 @@
-visualize = False
+import requests
+import lxml.html as lh
 
+visualize = False
+WC_countries = []
 WC_years = ['1982', '1986', '1990', '1994', '1998', '2002', '2006', '2010', '2014']
 WC_hosts = ["Spain", "Mexico", "Italy", "United States of America", "France", "Japan",
             "Germany", "South Africa", "Brazil"]
@@ -27,3 +30,30 @@ WC_participants_dict = {
     2010: ("South Africa", "Mexico", "Uruguay", "France", "Argentina" , "Nigeria" , "South Korea", "Greece", "England" , "United States" , "Algeria", "Slovenia", "Germany" , "Australia" , "Serbia" , "Ghana", "Netherlands" , "Denmark" , "Japan", "Cameroon", "Italy" , "Paraguay", "New Zealand", "Slovakia", "Brazil", "NorthKorea" , "Ivory Coast", "Portugal", "Spain" , "Switzerland" , "Honduras" , "Chile"),
     2014: ("Brazil" , "Croatia", "Mexico" , "Cameroon", "Spain", "Netherlands", "Chile", "Australia", "Colombia" , "Greece" , "Ivory Coast", "Japan", "Uruguay", "Costa Rica", "England", "Italy", "Switzerland", "Ecuador", "France" , "Honduras", "Argentina", "Bosnia-Herzegovina" , "Iran" , "Nigeria", "Germany", "Portugal" , "Ghana", "United States", "Belgium", "Algeria", "Russia" , "South Korea")
 }
+
+
+def get_participants_from_web():
+    url = 'https://en.wikipedia.org/wiki/All-time_table_of_the_FIFA_World_Cup'
+    page = requests.get(url)
+    doc = lh.fromstring(page.content)
+    tr_elements = doc.xpath('//tr')
+    flag = False
+    participants = []
+    for j in range(3, 82):
+        # T is our j'th row
+        T = tr_elements[j]
+        # Iterate through each element of the row
+        for t in T.iterchildren():
+            if flag:
+                data = t.text_content()[1:-1]
+                if '[' in data:
+                    data = data[:data.find("[")]
+                participants.append(data)
+                flag = False
+                break
+            flag = True
+    return set(participants)
+
+
+"""get all countries that participated in WC"""
+WC_participants = get_participants_from_web()
