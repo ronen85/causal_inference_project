@@ -10,20 +10,21 @@ from preprocessing import *
 
 ids = ["200827384", "034749473"]
 
+
 def load_dataframe():
     """load the dataframe """
 
     """Read the Data"""
-    df = pd.read_csv('./data/WHO.csv', header=0)
+    dataframe = pd.read_csv('./data/WHO.csv', header=0)
     """Dataframes by country"""
-    df["country"] = df["country"].astype('category')
-    who_countries = set(df["country"])
+    dataframe["country"] = dataframe["country"].astype('category')
+    who_countries = set(dataframe["country"])
     countries = who_countries.intersection(WC_participants)
     """add countries that were removed due to different spelling between the lists"""
     added_by_hand = {'Switzerland', 'United States of America', 'Russian Federation', 'Iran (Islamic Rep of)',
                      'Republic of Korea'}
-    WC_countries = countries.union(added_by_hand)
-    return df[df.country.isin(WC_countries)]
+    relevant_countries = countries.union(added_by_hand)
+    return dataframe[dataframe.country.isin(relevant_countries)], relevant_countries
 
 
 def feature_modification(original_df):
@@ -33,16 +34,16 @@ def feature_modification(original_df):
     new_df['is_host'] = False
     new_df['in_finals'] = False
     new_df['participant'] = False
-    for year, host in WC_dict:
-        idx1 = new_df[(new_df.year == int(year)) & (new_df.country == host)].index.values
+    for y, host in WC_dict:
+        idx1 = new_df[(new_df.year == y) & (new_df.country == host)].index.values
         if len(idx1):
             for i in idx1:
                 new_df.at[i, 'is_host'] = True
-        idx2 = new_df[(new_df.year == int(year)) & (new_df.country.isin(WC_finals[int(year)]))].index.values
+        idx2 = new_df[(new_df.year == y) & (new_df.country.isin(WC_finals[y]))].index.values
         if len(idx2):
             for i in idx2:
                 new_df.at[i, 'in_finals'] = True
-        idx3 = new_df[(new_df.year == int(year)) & (new_df.country.isin(WC_participants))].index.values
+        idx3 = new_df[(new_df.year == y) & (new_df.country.isin(WC_participants_by_year[y]))].index.values
         if len(idx3):
             for i in idx3:
                 new_df.at[i, 'participant'] = True
@@ -65,7 +66,7 @@ def split_dataframe(original_df):
 
 if __name__ == "__main__":
 
-    df = load_dataframe()
+    df, WC_countries = load_dataframe()
 
     # ----------------------PREPROCESSING---------------------------------
     """Preprocessing: remove NaN and years where country has 0 population"""
@@ -73,31 +74,34 @@ if __name__ == "__main__":
     clean_zeros(df)
 
     # ----------------------FEATURE MODIFICATION---------------------------------
+    """adding/removing features to dataframe"""
     df = feature_modification(df)
 
     # ----------------------SPLITTING DATAFRAMES---------------------------------
+    """creating new dataframes by features"""
     df_male, df_female, df_male_by_age, df_female_by_age = split_dataframe(df)
 
     # ----------------------OBTAINING COUNTRY GRAPHS---------------------------------
-
+    """visualization of data"""
     if visualize:
         graphs_all_country(df)
-
-    graphs_by_country(df, 'France', 'male')
-
+        graphs_by_country(df, 'France', 'male')
 
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
-    # WC_suicide_dict = {}
-    #
-    # for year in WC_years:
-    #     for country in countries:
-    #         """check if the database holds at lease 4 of the required years (including the WC one)"""
-    #         if check_years(df, year, country):
-    #             """create Observation object"""
-    #             WC_suicide_dict[country + year] = Observation(df, country, year)
-    #         else:
-    #             WC_suicide_dict[country + year] = 'no_info'
-    # print()
+
+    WC_suicide_dict = {}
+
+    for country in WC_countries:
+        suicide_dict_country = {}
+        for year in WC_years:
+            """check if the database holds at lease 4 of the required years (including the WC one)"""
+            if check_years(df, year, country):
+                """create Observation object"""
+                suicide_dict_country[year] = Observation(df, country, year)
+            else:
+                suicide_dict_country[year] = 'no_info'
+        WC_suicide_dict[country] = suicide_dict_country
+    print()
 
     # -------------------------------------------------------
     """Test case """

@@ -42,8 +42,8 @@ def graphs_by_country(df, country, sex=None, age=None):
     for age in by_age_dict:
         plt.plot(years_dict[age], by_age_dict[age], label=age)
 
-    for xc in WC_years:
-        plt.axvline(x=int(xc), color='k', linestyle='--')
+    for year in WC_years:
+        plt.axvline(x=year, color='k', linestyle='--')
     plt.legend()
     plt.title(country)
     plt.show()
