@@ -101,7 +101,7 @@ if __name__ == "__main__":
         graphs_by_country(df, 'France', 'male')
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
     """obtaining Observation objects per country and WC year"""
-    WC_suicide_dict, WC_countries = get_observations(df, WC_countries, sex='female')
+    WC_suicide_dict, WC_countries = get_observations(df, WC_countries, sex=None, age=None)
 
     # ----------------------TESTS---------------------------------
     """
@@ -113,13 +113,21 @@ if __name__ == "__main__":
         5) split countries into groups with significant positive or negative effect 
     """
 
-    """TEST (1) - global effect"""
+    """TEST (1) + TEST (5) - global effect & significant effect"""
     global_country_eff = []
+    sig_positive_eff = []
+    sig_negative_eff = []
     for country in WC_suicide_dict:
         yearly_eff = [WC_suicide_dict[country][x].suicide_diff_percentage for x in WC_suicide_dict[country]
          if WC_suicide_dict[country][x] != 'no_info']
         avg_eff = sum(yearly_eff)/len(yearly_eff)
         global_country_eff.append(avg_eff)
+
+        """splitting to significant effect countries"""
+        if avg_eff > 2:
+            sig_positive_eff.append([country, avg_eff])
+        elif avg_eff < -2:
+            sig_negative_eff.append([country, avg_eff])
     global_avg_eff = sum(global_country_eff) / len(global_country_eff)
 
     """TEST (2) - participation effect"""
@@ -131,7 +139,9 @@ if __name__ == "__main__":
     """TEST (4) - winner effect"""
     winner_avg_eff = get_effect(WC_winners, WC_countries, WC_suicide_dict)
 
-    """TEST (5) - signigicant effect"""
+
+
+    print()
 
     # winner_country_eff = []
     # for year in WC_years:
