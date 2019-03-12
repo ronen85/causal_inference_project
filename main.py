@@ -7,6 +7,7 @@ import csv
 from Observation import *
 from visualization import *
 from preprocessing import *
+from utilities import *
 
 ids = ["200827384", "034749473"]
 
@@ -34,6 +35,7 @@ def feature_modification(original_df):
     new_df['is_host'] = False
     new_df['in_finals'] = False
     new_df['participant'] = False
+    new_df['won'] = False
     for y, host in WC_dict:
         idx1 = new_df[(new_df.year == y) & (new_df.country == host)].index.values
         if len(idx1):
@@ -47,6 +49,10 @@ def feature_modification(original_df):
         if len(idx3):
             for i in idx3:
                 new_df.at[i, 'participant'] = True
+        idx4 = new_df[(new_df.year == y) & (new_df.country == WC_winners[y])].index.values
+        if len(idx4):
+            for i in idx4:
+                new_df.at[i, 'won'] = True
     return new_df
 
 
@@ -64,44 +70,103 @@ def split_dataframe(original_df):
     return df_m, df_f, df_m_by_age, df_f_by_age
 
 
+def get_effect(group, countries, suicide_dict):
+    eff_list = []
+    for year in WC_years:
+        for country in group[year]:
+            if country not in countries or suicide_dict[country][year] == 'no_info':
+                continue
+            eff_list.append(suicide_dict[country][year].suicide_diff_percentage)
+    return sum(eff_list) / len(eff_list)
+
+
 if __name__ == "__main__":
 
+    # ----------------------LOAD DATA---------------------------------
     df, WC_countries = load_dataframe()
-
     # ----------------------PREPROCESSING---------------------------------
     """Preprocessing: remove NaN and years where country has 0 population"""
     clean_nan(df)
     clean_zeros(df)
-
     # ----------------------FEATURE MODIFICATION---------------------------------
     """adding/removing features to dataframe"""
     df = feature_modification(df)
-
     # ----------------------SPLITTING DATAFRAMES---------------------------------
     """creating new dataframes by features"""
     df_male, df_female, df_male_by_age, df_female_by_age = split_dataframe(df)
-
     # ----------------------OBTAINING COUNTRY GRAPHS---------------------------------
     """visualization of data"""
     if visualize:
         graphs_all_country(df)
         graphs_by_country(df, 'France', 'male')
-
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
+    """obtaining Observation objects per country and WC year"""
+    WC_suicide_dict, WC_countries = get_observations(df, WC_countries, sex='female')
 
-    WC_suicide_dict = {}
+    # ----------------------TESTS---------------------------------
+    """
+    To test:
+        1) suicide statistics for all countries (global effect)
+        2) suicide statistics for all participating countries (participation effect)
+        3) suicide statistics for all finalist countries (finalist effect)
+        4) suicide statistics for all winning countries (winning effect)
+        5) split countries into groups with significant positive or negative effect 
+    """
 
-    for country in WC_countries:
-        suicide_dict_country = {}
-        for year in WC_years:
-            """check if the database holds at lease 4 of the required years (including the WC one)"""
-            if check_years(df, year, country):
-                """create Observation object"""
-                suicide_dict_country[year] = Observation(df, country, year)
-            else:
-                suicide_dict_country[year] = 'no_info'
-        WC_suicide_dict[country] = suicide_dict_country
+    """TEST (1) - global effect"""
+    global_country_eff = []
+    for country in WC_suicide_dict:
+        yearly_eff = [WC_suicide_dict[country][x].suicide_diff_percentage for x in WC_suicide_dict[country]
+         if WC_suicide_dict[country][x] != 'no_info']
+        avg_eff = sum(yearly_eff)/len(yearly_eff)
+        global_country_eff.append(avg_eff)
+    global_avg_eff = sum(global_country_eff) / len(global_country_eff)
+
+    """TEST (2) - participation effect"""
+    participant_avg_eff = get_effect(WC_participants_by_year, WC_countries, WC_suicide_dict)
+
+    """TEST (3) - finalist effect"""
+    finalists_avg_eff = get_effect(WC_finals, WC_countries, WC_suicide_dict)
+
+    """TEST (4) - winner effect"""
+    winner_avg_eff = get_effect(WC_winners, WC_countries, WC_suicide_dict)
+
+    """TEST (5) - signigicant effect"""
+
+    # winner_country_eff = []
+    # for year in WC_years:
+    #     for country in WC_winners[year]:
+    #         if country not in WC_countries or WC_suicide_dict[country][year] == 'no_info':
+    #             continue
+    #         winner_country_eff.append(WC_suicide_dict[country][year].suicide_diff_percentage)
+    # winner_avg_eff = sum(winner_country_eff) / len(winner_country_eff)
+
     print()
+
+
+    # for country in WC_suicide_dict:
+    #     for year
+    #
+    #     yearly_eff = [WC_suicide_dict[country][x].suicide_diff_percentage for x in WC_suicide_dict[country]
+    #                   if WC_suicide_dict[country][x] != 'no_info']
+    #     avg_eff = sum(yearly_eff) / len(yearly_eff)
+    #     global_country_eff.append(avg_eff)
+    # global_avg_eff = sum(global_country_eff) / len(global_country_eff)
+
+        # for year in WC_suicide_dict[country]:
+        #     if WC_suicide_dict[country][year] == 'no_info':
+        #         pass
+        #     WC_suicide_dict[country][year].suicide_diff_percentage
+        #     # if WC_suicide_dict[country][year]
+            # WC_suicide_dict[country][year].suicide_diff_percentage
+
+
+    print()
+
+
+
+
+
 
     # -------------------------------------------------------
     """Test case """

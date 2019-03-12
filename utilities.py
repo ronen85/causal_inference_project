@@ -31,6 +31,17 @@ WC_participants_by_year = {
     2014: ("Brazil" , "Croatia", "Mexico" , "Cameroon", "Spain", "Netherlands", "Chile", "Australia", "Colombia", "Greece", "Ivory Coast", "Japan", "Uruguay", "Costa Rica", "England", "Italy", "Switzerland", "Ecuador", "France", "Honduras", "Argentina", "Bosnia-Herzegovina", "Iran", "Nigeria", "Germany", "Portugal", "Ghana", "United States of America", "Belgium", "Algeria", "Russia", "South Korea")
 }
 
+WC_winners = {
+    1982: ['Italy'],
+    1986: ['Argentina'],
+    1990: ['Germany'],
+    1994: ['Brazil'],
+    1998: ['France'],
+    2002: ['Brazil'],
+    2006: ['Italy'],
+    2010: ['Spain'],
+    2014: ['Germany']
+}
 
 def get_participants_from_web():
     url = 'https://en.wikipedia.org/wiki/All-time_table_of_the_FIFA_World_Cup'
