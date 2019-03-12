@@ -10,7 +10,7 @@ class Observation:
         """get information per year"""
         info = [df[(df['year'] == x) & (df['country'] == self.country)] for x in self.years]
         self.info_per_year = dict(zip(self.years, info))
-        self.suicide_avg, self.wc_ratio, self.suicide_diff_percentage = self.get_suicide_diff()
+        self.suicide_avg, self.wc_year_ratio, self.suicide_diff_percentage = self.get_suicide_diff()
 
     def get_suicide_ratio(self, year, age=None, sex=None):
         assert year in self.years, "Desired year is not in Observation Years"
