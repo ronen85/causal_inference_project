@@ -9,6 +9,12 @@ from preprocessing import *
 from utilities import *
 from main import *
 
+def get_sr(df, country_name, year):
+    rel_df = df.loc[(df.country == country_name) & (df.year == year)]
+    sr = np.sum(rel_df.suicides_no)/np.sum(rel_df.population) * 10**5
+    return sr
+
+
 if __name__ == '__main__':
     make_new_df = True
 
@@ -17,6 +23,6 @@ if __name__ == '__main__':
         # raw_df = pd.read_csv('./data/WHO.csv', header=0)
 
     """Read the Data"""
-    df = pd.read_csv('./data/ronen_df.csv', header=0)
+    # df = pd.read_csv('./data/ronen_df.csv', header=0)
     print('test')
 
