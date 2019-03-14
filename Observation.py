@@ -5,17 +5,15 @@ class Observation:
     def __init__(self, df, country, year, age=None, sex=None):
         self.country = country
         self.wc_year = year
-        self.years = list(range(year - 2, year + 3))
-
+        year_range = PARAMETERS['Year_Range']
+        self.years = list(range(year - year_range, year + year_range + 1))
         """get information per year"""
         info = [df[(df['year'] == x) & (df['country'] == self.country)] for x in self.years]
         self.info_per_year = dict(zip(self.years, info))
-        self.suicide_avg, self.wc_year_ratio, self.suicide_diff_percentage = self.get_suicide_diff(age, sex)
-
+        self.suicide_avg, self.suicide_std, self.wc_year_ratio, self.effect = self.get_suicide_diff(age, sex)
         self.paticipated = self.info_per_year[year].participant.values[0]
         self.finalist = self.info_per_year[year].in_finals.values[0]
         self.won = self.info_per_year[year].won.values[0]
-
 
     def get_suicide_ratio(self, year, age=None, sex=None):
         assert year in self.years, "Desired year is not in Observation Years"
@@ -30,26 +28,31 @@ class Observation:
         """get difference between WC year to other years"""
         avg_years = [x for x in self.info_per_year if self.info_per_year[x].__len__()]
         avg_years.remove(self.wc_year)
-        avg = sum([self.get_suicide_ratio(year, age, sex) for year in avg_years])/len(avg_years)
+        sucide_ratio_list = [self.get_suicide_ratio(year, age, sex) for year in avg_years]
+        avg = np.mean(sucide_ratio_list)
+        std = np.std(sucide_ratio_list)
         wc_ratio = self.get_suicide_ratio(self.wc_year, age, sex)
-        return avg, wc_ratio, ((avg - wc_ratio)/avg)*100
+        eff = (wc_ratio - avg) / std
+        return avg, std, wc_ratio, eff
 
 
 def check_years(df, year, country):
     """check if the database holds the required info"""
     if not df[(df.year == year) & (df.country == country)].__len__():
         return False
-    # if not sum(df[(df.year == int(year)) & (df.country == country)].population):
-    #     return False
-    # if not sum(df[(df.year == int(year)) & (df.country == country)].suicides_no):
-    #     return False
-
     count = 0
-    for i in range(-2, 3):
-        if df[(df.year == year + i) & (df.country == country)].__len__():
-            count += 1
-    if count >= 4:
-        return True
+    if PARAMETERS['Year_Range'] == 1:
+        for i in range(-1, 2):
+            if df[(df.year == year + i) & (df.country == country)].__len__():
+                count += 1
+        if count == 3:
+            return True
+    else:
+        for i in range(-2, 3):
+            if df[(df.year == year + i) & (df.country == country)].__len__():
+                count += 1
+        if count >= 4:
+            return True
 
 
 def get_observations(df, countries, age=None, sex=None):

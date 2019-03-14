@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import copy
 from sklearn import linear_model
@@ -76,7 +75,7 @@ def get_effect(group, countries, suicide_dict):
         for country in group[year]:
             if country not in countries or suicide_dict[country][year] == 'no_info':
                 continue
-            eff_list.append(suicide_dict[country][year].suicide_diff_percentage)
+            eff_list.append(suicide_dict[country][year].effect)
     return sum(eff_list) / len(eff_list)
 
 
@@ -94,11 +93,13 @@ if __name__ == "__main__":
     # ----------------------SPLITTING DATAFRAMES---------------------------------
     """creating new dataframes by features"""
     df_male, df_female, df_male_by_age, df_female_by_age = split_dataframe(df)
+
     # ----------------------OBTAINING COUNTRY GRAPHS---------------------------------
     """visualization of data"""
-    if visualize:
-        graphs_all_country(df)
+    if PARAMETERS['Visualize']:
+        graphs_all_country(df, WC_countries)
         graphs_by_country(df, 'France', 'male')
+
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
     """obtaining Observation objects per country and WC year"""
     WC_suicide_dict, WC_countries = get_observations(df, WC_countries, sex=None, age=None)
@@ -118,17 +119,17 @@ if __name__ == "__main__":
     sig_positive_eff = []
     sig_negative_eff = []
     for country in WC_suicide_dict:
-        yearly_eff = [WC_suicide_dict[country][x].suicide_diff_percentage for x in WC_suicide_dict[country]
-         if WC_suicide_dict[country][x] != 'no_info']
+        yearly_eff = [WC_suicide_dict[country][x].effect for x in
+                      WC_suicide_dict[country] if WC_suicide_dict[country][x] != 'no_info']
         avg_eff = sum(yearly_eff)/len(yearly_eff)
         global_country_eff.append(avg_eff)
 
-        """splitting to significant effect countries"""
+        """splitting to significant effect countries""" #TODO define avg_eff better
         if avg_eff > 2:
             sig_positive_eff.append([country, avg_eff])
         elif avg_eff < -2:
             sig_negative_eff.append([country, avg_eff])
-    global_avg_eff = sum(global_country_eff) / len(global_country_eff)
+    global_avg_eff = np.mean(global_country_eff)
 
     """TEST (2) - participation effect"""
     participant_avg_eff = get_effect(WC_participants_by_year, WC_countries, WC_suicide_dict)
@@ -139,65 +140,12 @@ if __name__ == "__main__":
     """TEST (4) - winner effect"""
     winner_avg_eff = get_effect(WC_winners, WC_countries, WC_suicide_dict)
 
+    for country, avg_eff in sig_positive_eff:
+        print()
+
+    # ----------------------MORE GRAPHS---------------------------------
+
+
 
 
     print()
-
-    # winner_country_eff = []
-    # for year in WC_years:
-    #     for country in WC_winners[year]:
-    #         if country not in WC_countries or WC_suicide_dict[country][year] == 'no_info':
-    #             continue
-    #         winner_country_eff.append(WC_suicide_dict[country][year].suicide_diff_percentage)
-    # winner_avg_eff = sum(winner_country_eff) / len(winner_country_eff)
-
-    print()
-
-
-    # for country in WC_suicide_dict:
-    #     for year
-    #
-    #     yearly_eff = [WC_suicide_dict[country][x].suicide_diff_percentage for x in WC_suicide_dict[country]
-    #                   if WC_suicide_dict[country][x] != 'no_info']
-    #     avg_eff = sum(yearly_eff) / len(yearly_eff)
-    #     global_country_eff.append(avg_eff)
-    # global_avg_eff = sum(global_country_eff) / len(global_country_eff)
-
-        # for year in WC_suicide_dict[country]:
-        #     if WC_suicide_dict[country][year] == 'no_info':
-        #         pass
-        #     WC_suicide_dict[country][year].suicide_diff_percentage
-        #     # if WC_suicide_dict[country][year]
-            # WC_suicide_dict[country][year].suicide_diff_percentage
-
-
-    print()
-
-
-
-
-
-
-    # -------------------------------------------------------
-    """Test case """
-    # country = 'Germany'
-    # year = '1994'
-    #
-    # """check if this information exists"""
-    # if df[(df.year == int(year)-2) & (df.country == country)].__len__():
-    #     """create Observation object"""
-    #     WC_suicide_dict[country + year] = Observation(df, country, year)
-    # else:
-    #     WC_suicide_dict[country + year] = 'no_info'
-    #
-    # WC_suicide_dict[country + year].get_suicide_num(int(year), ['15-24 years', '25-34 years'])
-    # WC_suicide_dict[country + year].get_population(int(year), ['15-24 years'])
-    # -------------------------------------------------------
-
-"""
-Treatments:
-    1) WC year
-    2) WC year + country participates
-    3) WC year + country host
-    4) WC year + country in finals
-"""
