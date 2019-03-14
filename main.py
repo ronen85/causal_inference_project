@@ -76,13 +76,13 @@ def get_effect(group, countries, suicide_dict):
             if country not in countries or suicide_dict[country][year] == 'no_info':
                 continue
             eff_list.append(suicide_dict[country][year].effect)
-    return sum(eff_list) / len(eff_list)
+    return np.mean(eff_list)
 
 
 if __name__ == "__main__":
 
     # ----------------------LOAD DATA---------------------------------
-    df, WC_countries = load_dataframe()
+    df, PARAMETERS['countries'] = load_dataframe()
     # ----------------------PREPROCESSING---------------------------------
     """Preprocessing: remove NaN and years where country has 0 population"""
     clean_nan(df)
@@ -93,16 +93,29 @@ if __name__ == "__main__":
     # ----------------------SPLITTING DATAFRAMES---------------------------------
     """creating new dataframes by features"""
     df_male, df_female, df_male_by_age, df_female_by_age = split_dataframe(df)
-
     # ----------------------OBTAINING COUNTRY GRAPHS---------------------------------
     """visualization of data"""
     if PARAMETERS['Visualize']:
-        graphs_all_country(df, WC_countries)
+        graphs_all_country(df)
         graphs_by_country(df, 'France', 'male')
 
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
     """obtaining Observation objects per country and WC year"""
-    WC_suicide_dict, WC_countries = get_observations(df, WC_countries, sex=None, age=None)
+    # WC_suicide_dict, cntryz = get_observations(df)
+    # WC_suicide_dict_male, cntryz_m = get_observations(df_male)
+    # WC_suicide_dict_female, cntryz_f = get_observations(df_female)
+
+    for age_grp in df_male_by_age:
+        """Male"""
+        WC_suicide_dict, countries = get_observations(df_male_by_age[age_grp])
+        world_graph(WC_suicide_dict, countries, 'male', age_grp)
+        graph_eff_by_country(countries, WC_suicide_dict, 'male', age_grp)
+        participant_avg_eff = get_effect(WC_participants_by_year, countries, WC_suicide_dict)
+
+        """Female"""
+        WC_suicide_dict, countries = get_observations(df_female_by_age[age_grp])
+        world_graph(WC_suicide_dict, countries, 'female', age_grp)
+        graph_eff_by_country(countries, WC_suicide_dict, 'female', age_grp)
 
     # ----------------------TESTS---------------------------------
     """
@@ -115,37 +128,37 @@ if __name__ == "__main__":
     """
 
     """TEST (1) + TEST (5) - global effect & significant effect"""
-    global_country_eff = []
-    sig_positive_eff = []
-    sig_negative_eff = []
-    for country in WC_suicide_dict:
-        yearly_eff = [WC_suicide_dict[country][x].effect for x in
-                      WC_suicide_dict[country] if WC_suicide_dict[country][x] != 'no_info']
-        avg_eff = sum(yearly_eff)/len(yearly_eff)
-        global_country_eff.append(avg_eff)
-
-        """splitting to significant effect countries""" #TODO define avg_eff better
-        if avg_eff > 2:
-            sig_positive_eff.append([country, avg_eff])
-        elif avg_eff < -2:
-            sig_negative_eff.append([country, avg_eff])
-    global_avg_eff = np.mean(global_country_eff)
-
+    # global_country_eff = []
+    # sig_positive_eff = []
+    # sig_negative_eff = []
+    # for country in WC_suicide_dict:
+    #     yearly_eff = [WC_suicide_dict[country][x].effect for x in
+    #                   WC_suicide_dict[country] if WC_suicide_dict[country][x] != 'no_info']
+    #     avg_eff = sum(yearly_eff)/len(yearly_eff)
+    #     global_country_eff.append(avg_eff)
+    #
+    #     """splitting to significant effect countries""" #TODO define avg_eff better
+    #     if avg_eff > 2:
+    #         sig_positive_eff.append([country, avg_eff])
+    #     elif avg_eff < -2:
+    #         sig_negative_eff.append([country, avg_eff])
+    # global_avg_eff = np.mean(global_country_eff)
+    #
     """TEST (2) - participation effect"""
     participant_avg_eff = get_effect(WC_participants_by_year, WC_countries, WC_suicide_dict)
-
-    """TEST (3) - finalist effect"""
-    finalists_avg_eff = get_effect(WC_finals, WC_countries, WC_suicide_dict)
-
-    """TEST (4) - winner effect"""
-    winner_avg_eff = get_effect(WC_winners, WC_countries, WC_suicide_dict)
-
-    for country, avg_eff in sig_positive_eff:
-        print()
+    #
+    # """TEST (3) - finalist effect"""
+    # finalists_avg_eff = get_effect(WC_finals, WC_countries, WC_suicide_dict)
+    #
+    # """TEST (4) - winner effect"""
+    # winner_avg_eff = get_effect(WC_winners, WC_countries, WC_suicide_dict)
+    #
+    # for country, avg_eff in sig_positive_eff:
+    #     print()
 
     # ----------------------MORE GRAPHS---------------------------------
 
 
 
-
     print()
+

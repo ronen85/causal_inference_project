@@ -3,7 +3,8 @@ from matplotlib.pylab import plt
 from utilities import *
 
 
-def graphs_all_country(df, countries):
+def graphs_all_country(df):
+    countries = PARAMETERS['countries']
 
     by_country = {}
     for country in countries:
@@ -46,4 +47,41 @@ def graphs_by_country(df, country, sex=None, age=None):
         plt.axvline(x=year, color='k', linestyle='--')
     plt.legend()
     plt.title(country)
+    plt.show()
+
+
+def world_graph(suicide_dict, cntryz, sex, age):
+    eff_mean_list = []
+    for year in WC_years:
+        eff_list = []
+        for c in cntryz:
+            if suicide_dict[c][year] != 'no_info':
+                eff_list.append(suicide_dict[c][year].effect)
+        eff_mean_list.append(np.mean(eff_list))
+
+    plt.plot(WC_years, eff_mean_list)
+    for year in WC_years:
+        plt.axvline(x=year, color='k', linestyle='--')
+    plt.legend()
+    plt.title('Global, sex='+sex+' , age='+age)
+    plt.show()
+
+
+def graph_eff_by_country(countries, suicide_dict, sex, age):
+    c_list = []
+    countrys = []
+    for country in countries:
+        yearly_eff = [suicide_dict[country][x].effect for x in
+                      suicide_dict[country] if suicide_dict[country][x] != 'no_info']
+        countrys.append(country)
+        c_list.append(np.mean(yearly_eff))
+
+    y_pos = np.arange(len(countrys))
+    plt.bar(y_pos, c_list, align='center', alpha=0.5)
+    plt.xticks(y_pos, countrys, rotation='vertical')
+    plt.ylabel('Effect')
+    plt.xlabel('Country')
+    plt.title('Effect per Country, sex='+sex+' , age='+age)
+    plt.axhline(y=1, color='k', linestyle='--')
+    plt.axhline(y=-1, color='k', linestyle='--')
     plt.show()
