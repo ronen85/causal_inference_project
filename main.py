@@ -28,7 +28,7 @@ def load_dataframe():
 
 
 def feature_modification(original_df):
-    original_df['suicide_ratio'] = (original_df.suicides_no / original_df.population) * 10000
+    original_df['suicide_ratio'] = (original_df.suicides_no / original_df.population) * 100000
     new_df = original_df.drop(columns=['population', 'suicides_no'])
     new_df['is_WC_year'] = original_df.year.isin(WC_years)
     new_df['is_host'] = False
@@ -105,7 +105,8 @@ if __name__ == "__main__":
     # WC_suicide_dict_male, cntryz_m = get_observations(df_male)
     # WC_suicide_dict_female, cntryz_f = get_observations(df_female)
 
-    for age_grp in df_male_by_age:
+    age_groups = ['15-24 years', '25-34 years', '35-54 years', '55-74 years']
+    for age_grp in age_groups:
         """Male"""
         WC_suicide_dict, countries = get_observations(df_male_by_age[age_grp])
         world_graph(WC_suicide_dict, countries, 'male', age_grp)

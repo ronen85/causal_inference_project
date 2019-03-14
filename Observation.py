@@ -1,6 +1,7 @@
 """create class for our observations"""
 from utilities import *
 
+
 class Observation:
     def __init__(self, df, country, year):
         self.country = country
@@ -19,11 +20,11 @@ class Observation:
         """get difference between WC year to other years"""
         avg_years = [x for x in self.info_per_year if self.info_per_year[x].__len__()]
         avg_years.remove(self.wc_year)
-        sucide_ratio_list = [sum(self.info_per_year[year].suicide_ratio) for year in avg_years]
-        avg = np.mean(sucide_ratio_list)
-        std = np.std(sucide_ratio_list)
+        suicide_ratio_list = [sum(self.info_per_year[year].suicide_ratio) for year in avg_years]
+        avg = np.mean(suicide_ratio_list)
+        std = np.std(suicide_ratio_list)
         wc_ratio = sum(self.info_per_year[self.wc_year].suicide_ratio)
-        eff = (wc_ratio - avg) / std
+        eff = (wc_ratio - avg) / (1 + std)
         return avg, std, wc_ratio, eff
 
 

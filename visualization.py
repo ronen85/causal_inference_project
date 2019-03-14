@@ -1,5 +1,6 @@
 from collections import defaultdict
 from matplotlib.pylab import plt
+from matplotlib import pyplot as mp
 from utilities import *
 
 
@@ -59,12 +60,14 @@ def world_graph(suicide_dict, cntryz, sex, age):
                 eff_list.append(suicide_dict[c][year].effect)
         eff_mean_list.append(np.mean(eff_list))
 
+    plt.figure()
     plt.plot(WC_years, eff_mean_list)
     for year in WC_years:
         plt.axvline(x=year, color='k', linestyle='--')
     plt.legend()
     plt.title('Global, sex='+sex+' , age='+age)
-    plt.show()
+    # plt.show()
+    mp.savefig('./graphs/world/'+sex+'_'+age+'.pdf')
 
 
 def graph_eff_by_country(countries, suicide_dict, sex, age):
@@ -76,12 +79,14 @@ def graph_eff_by_country(countries, suicide_dict, sex, age):
         countrys.append(country)
         c_list.append(np.mean(yearly_eff))
 
-    y_pos = np.arange(len(countrys))
-    plt.bar(y_pos, c_list, align='center', alpha=0.5)
-    plt.xticks(y_pos, countrys, rotation='vertical')
-    plt.ylabel('Effect')
+    plt.figure()
+    index = list(range(len(countrys)))
+    plt.bar(index, c_list, align='center', alpha=0.5)
     plt.xlabel('Country')
-    plt.title('Effect per Country, sex='+sex+' , age='+age)
+    plt.ylabel('Effect')
+    plt.xticks(index, countrys, rotation='vertical')
+    plt.title('Effect per Country, sex=' + sex + ' , age=' + age)
     plt.axhline(y=1, color='k', linestyle='--')
     plt.axhline(y=-1, color='k', linestyle='--')
-    plt.show()
+    # plt.show()
+    mp.savefig('./graphs/by_country/' + sex + '_' + age + '.pdf')
