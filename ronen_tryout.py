@@ -25,7 +25,6 @@ def load_dataframe():
     # return dataframe[dataframe.country.isin(relevant_countries)], relevant_countries
     return dataframe
 
-
 def get_sr(df, country_name, year):
     rel_df = df.loc[(df.country == country_name) & (df.year == year)]
     sr = np.sum(rel_df.suicides_no)/np.sum(rel_df.population) * 10**5
@@ -56,8 +55,6 @@ def get_ate(df, country_name, year):
               get_sr(df,country_name,year+1))
     ATE = Y1 - Y0
     return ATE
-
-
 
 if __name__ == '__main__':
     make_new_df = True
