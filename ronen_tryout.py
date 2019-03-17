@@ -68,6 +68,7 @@ def check_num_of_records(dataframe, country_name, year):
 if __name__ == '__main__':
     make_new_df = True
     compute_ate_for_year = False
+    compute_ate_for_one_country = False
 
     if make_new_df:
         df = load_dataframe()
@@ -87,7 +88,7 @@ if __name__ == '__main__':
         for c in cs:
             if np.sum(tuple((df_ate.country == c) & (df_ate.year.isin(l)))) != 36:
                 print('Missing data in %s in years around %s'%(c,wc_year))
-                df_ate.drop(df_ate.loc[df.country == c].index, inplace=True)
+                df_ate.drop(df_ate.loc[df_ate.country == c].index, inplace=True)
         # remove small countries
         min_population = 5*10**6
         cs = list(df_ate.country.unique())
@@ -141,31 +142,69 @@ if __name__ == '__main__':
         plt.show()
 
     """compute ate for one country"""
-    country = "France"
-    df_ate = df.loc[df.country == country]
+    if compute_ate_for_one_country:
+        country = "France"
+        df_ate = df.loc[df.country == country]
+        # remove nan values
+        df_ate = remove_nan_from_df(df_ate)
+        # remove wc years with missing data
+        ys = []
+        for y in WC_years:
+            check = [check_num_of_records(df_ate,country,a) for a in range(y-1,y+2)]
+            if not(False in check):
+                ys.append(y)
+        # compute ate
+        ate_dict = {}
+        for y in ys:
+            ate_dict[y] = get_ate(df_ate,country,y)
+        # plot it
+        plt.figure(1)
+        plt.title("Change in Suicide Rates in %s" % country)
+        plt.ylabel('ATE = Y1 - Y0')
+        plt.xlabel('Years')
+        barlist = plt.bar(range(len(ate_dict)), ate_dict.values(), align='center')
+        for i in range(len(ate_dict)):
+            if country in WC_participants_by_year[list(ate_dict.keys())[i]]:
+                barlist[i].set_color('r')
+        plt.xticks(range(len(ate_dict)), list(ate_dict.keys()), rotation='vertical')
+        plt.show()
+
+    """compute ate for participants"""
+    rel_years = []
+    for y in WC_years:
+        rel_years += [y-1,y,y+1]
+    df_ate = df.loc[df.year.isin(rel_years)]
     # remove nan values
     df_ate = remove_nan_from_df(df_ate)
-    # remove wc years with missing data
-    ys = []
-    for y in WC_years:
-        check = [check_num_of_records(df_ate,country,a) for a in range(y-1,y+2)]
-        if not(False in check):
-            ys.append(y)
-    # compute ate
+    # remove small countries
+    min_population = 5 * 10 ** 6
+    cs = list(df_ate.country.unique())
+    country_size_dict = {}
+    for c in cs:
+        country_size_dict[c] = np.sum(df_ate.loc[(df_ate.country == c) &
+                                                 (df_ate.year.unique()[0] == df_ate.year)].population)
+        if country_size_dict[c] < min_population:
+            print('%s is too small, we dropped it' % (c,))
+            df_ate.drop(df_ate.loc[(df_ate.country == c)].index, inplace=True)
     ate_dict = {}
-    for y in ys:
-        ate_dict[y] = get_ate(df_ate,country,y)
-    # plot it
-    plt.figure(1)
-    plt.title("Change in Suicide Rates in %s" % country)
-    plt.ylabel('ATE = Y1 - Y0')
-    plt.xlabel('Years')
-    barlist = plt.bar(range(len(ate_dict)), ate_dict.values(), align='center')
-    for i in range(len(ate_dict)):
-        if country in WC_participants_by_year[list(ate_dict.keys())[i]]:
-            barlist[i].set_color('r')
-    plt.xticks(range(len(ate_dict)), list(ate_dict.keys()), rotation='vertical')
-    plt.show()
+    for y in WC_years:
+        participants = WC_participants_by_year[y]
+        participants_with_data = [a for a in participants if (a in list(df_ate.loc[df_ate.year == y].country.unique()))]
+        ate_list = []
+        for p in participants_with_data:
+            ate = get_ate(df_ate,p,y)
+            if not(np.isnan(ate)):
+                ate_list.append(ate)
+        ate_dict[y] = np.average(ate_list)
+
+
+
+    # df_ate = pd.DataFrame(columns=df.columns)
+    # row_year = wc_year
+    # row_country = 'participants_in_%s'%wc_year
+    # row_sex = None
+    # row_age = None
+    # row_suicide_no =
 
 
 
