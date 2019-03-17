@@ -196,6 +196,7 @@ if __name__ == '__main__':
             if not(np.isnan(ate)):
                 ate_list.append(ate)
         ate_dict[y] = np.average(ate_list)
+        print('test')
 
 
 
