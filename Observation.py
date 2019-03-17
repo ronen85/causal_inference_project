@@ -50,7 +50,6 @@ def check_years(df, year, country):
 def get_observations(df):
     countries = PARAMETERS['countries']
     all_suicide_dict = {}
-    new_countries = list(countries)
     for country in countries:
         instances = len(WC_years)
         suicide_dict_country = {}
@@ -63,10 +62,5 @@ def get_observations(df):
                 suicide_dict_country[year] = 'no_info'
                 instances -= 1
 
-        """check if there is enough observations for this country"""
-        # #TODO decide if this is enough
-        # if instances >= 4:
         all_suicide_dict[country] = suicide_dict_country
-        # else:
-        #     new_countries.remove(country)
-    return all_suicide_dict #, set(new_countries)
+    return all_suicide_dict

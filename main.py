@@ -60,7 +60,7 @@ def feature_modification(original_df):
     new_df['in_finals'] = False
     new_df['participant'] = False
     new_df['won'] = False
-    for y, host in WC_dict:
+    for y, host in WC_dict.items():
         idx1 = new_df[(new_df.year == y) & (new_df.country == host)].index.values
         if len(idx1):
             for i in idx1:
@@ -129,52 +129,72 @@ if __name__ == "__main__":
         graphs_by_country(df, 'France', 'male')
 
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
-    """get graphs of ate per Country in specific year"""
+    # """get graphs of ate per Country in specific year"""
+    # for age_grp in df_male_by_age:
+    #     for sex in df_all:
+    #         WC_suicide_dict = get_observations(df_all[sex][age_grp])
+    #         for year in WC_years:
+    #             """Global"""
+    #             count, country_list = [], []
+    #             for country in PARAMETERS['countries']:
+    #                 if country in WC_suicide_dict:
+    #                     if WC_suicide_dict[country][year] != 'no_info':
+    #                         count.append(WC_suicide_dict[country][year].ate)
+    #                         country_list.append(country)
+    #
+    #             bar_graph('Global', age_grp, sex, count, country_list, year)
+    #
+    # """get graphs of ate per year for participants/finalists/winners by gender and age group"""
+    # for age_grp in df_male_by_age:
+    #     for sex in df_all:
+    #         WC_suicide_dict = get_observations(df_all[sex][age_grp])
+    #         participant_ate, finalist_ate, winner_ate, hosts_ate = [], [], [], []
+    #         for year in WC_years:
+    #             """participants"""
+    #             count = []
+    #             for country in WC_participants_by_year[year]:
+    #                 if country in WC_suicide_dict:
+    #                     if WC_suicide_dict[country][year] != 'no_info':
+    #                         count.append(WC_suicide_dict[country][year].ate)
+    #             participant_ate.append(np.mean(count))
+    #             """finalists"""
+    #             count = []
+    #             for country in WC_finals[year]:
+    #                 if country in WC_suicide_dict:
+    #                     if WC_suicide_dict[country][year] != 'no_info':
+    #                         count.append(WC_suicide_dict[country][year].ate)
+    #             finalist_ate.append(np.mean(count))
+    #             """winners"""
+    #             count = []
+    #             for country in WC_winners[year]:
+    #                 if country in WC_suicide_dict:
+    #                     if WC_suicide_dict[country][year] != 'no_info':
+    #                         count.append(WC_suicide_dict[country][year].ate)
+    #             winner_ate.append(np.mean(count))
+    #             """Hosts"""
+    #             count = []
+    #             country = WC_dict[year]
+    #             if country in WC_suicide_dict:
+    #                 if WC_suicide_dict[country][year] != 'no_info':
+    #                     count.append(WC_suicide_dict[country][year].ate)
+    #             hosts_ate.append(np.mean(count))
+    #
+    #         bar_graph('Participating', age_grp, sex, participant_ate, WC_years)
+    #         bar_graph('Finalist', age_grp, sex, finalist_ate, WC_years)
+    #         bar_graph('Winning', age_grp, sex, winner_ate, WC_years)
+    #         bar_graph('Hosting', age_grp, sex, hosts_ate, WC_years)
+
+    """get graphs of ate for specific Country for all years"""
+    """Specific Country"""
+    country = "Brazil"
     for age_grp in df_male_by_age:
         for sex in df_all:
-            WC_suicide_dict = get_observations(df_all[sex][age_grp])
-            participant_ate, finalist_ate, winner_ate = [], [], []
+            WC_suicide_dict = get_observations(df_all[sex][age_grp][df_all[sex][age_grp].country == 'Brazil'])
+            count = []
             for year in WC_years:
-                """Global"""
-                count, country_list = [], []
-                for country in PARAMETERS['countries']:
-                    if country in WC_suicide_dict:
-                        if WC_suicide_dict[country][year] != 'no_info':
-                            count.append(WC_suicide_dict[country][year].ate)
-                            country_list.append(country)
+                if country in WC_suicide_dict:
+                    if WC_suicide_dict[country][year] != 'no_info':
+                        count.append(WC_suicide_dict[country][year].ate)
 
-                bar_graph('Global', age_grp, sex, count, country_list, year)
-
-    """get graphs of ate per year for participants/finalists/winners by gender and age group"""
-    for age_grp in df_male_by_age:
-        for sex in df_all:
-            WC_suicide_dict = get_observations(df_all[sex][age_grp])
-            participant_ate, finalist_ate, winner_ate = [], [], []
-            for year in WC_years:
-                """participants"""
-                count = []
-                for country in WC_participants_by_year[year]:
-                    if country in WC_suicide_dict:
-                        if WC_suicide_dict[country][year] != 'no_info':
-                            count.append(WC_suicide_dict[country][year].ate)
-                participant_ate.append(np.mean(count))
-                """finalists"""
-                count = []
-                for country in WC_finals[year]:
-                    if country in WC_suicide_dict:
-                        if WC_suicide_dict[country][year] != 'no_info':
-                            count.append(WC_suicide_dict[country][year].ate)
-                finalist_ate.append(np.mean(count))
-                """winners"""
-                count = []
-                for country in WC_winners[year]:
-                    if country in WC_suicide_dict:
-                        if WC_suicide_dict[country][year] != 'no_info':
-                            count.append(WC_suicide_dict[country][year].ate)
-                winner_ate.append(np.mean(count))
-
-            bar_graph('Participating', age_grp, sex, participant_ate, WC_years)
-            bar_graph('Finalist', age_grp, sex, finalist_ate, WC_years)
-            bar_graph('Winning', age_grp, sex, winner_ate, WC_years)
-
+            bar_graph('Country', age_grp, sex, count, WC_years, None, country)
     print()

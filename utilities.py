@@ -27,7 +27,7 @@ WC_finals = {
     2010: ['Netherlands', 'Spain', 'Uruguay', 'Germany'],
     2014: ['Germany', 'Argentina', 'Brazil', 'Netherlands'],
 }
-WC_dict = zip(WC_years, WC_hosts)
+WC_dict = dict(zip(WC_years, WC_hosts))
 
 WC_participants_by_year = {
     1982: ("Poland", "Italy", "Cameroon", "Peru", "Belgium", "Argentina", "Hungary", "El Salvador", "United Kingdom", "France", "Czechoslovakia", "Kuwait", "Brazil", "Soviet Union", "Scotland", "New Zealand", "NorthernIreland", "Spain", "Yugoslavia", "Honduras", "West Germany", "Austria" , "Algeria", "Chile"),
