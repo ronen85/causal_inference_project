@@ -11,7 +11,7 @@ class Observation:
         """get information per year"""
         info = [df[(df['year'] == x) & (df['country'] == self.country)] for x in self.years]
         self.info_per_year = dict(zip(self.years, info))
-        self.suicide_avg, self.suicide_std, self.wc_year_ratio, self.effect = self.get_suicide_diff()
+        self.suicide_avg, self.wc_year_ratio, self.ate = self.get_suicide_diff()
         self.paticipated = self.info_per_year[year].participant.values[0]
         self.finalist = self.info_per_year[year].in_finals.values[0]
         self.won = self.info_per_year[year].won.values[0]
@@ -22,10 +22,10 @@ class Observation:
         avg_years.remove(self.wc_year)
         suicide_ratio_list = [sum(self.info_per_year[year].suicide_ratio) for year in avg_years]
         avg = np.mean(suicide_ratio_list)
-        std = np.std(suicide_ratio_list)
+        # std = np.std(suicide_ratio_list)
         wc_ratio = sum(self.info_per_year[self.wc_year].suicide_ratio)
-        eff = (wc_ratio - avg) / (1 + std)
-        return avg, std, wc_ratio, eff
+        eff = (wc_ratio - avg) #/ (1 + std)
+        return avg, wc_ratio, eff
 
 
 def check_years(df, year, country):
@@ -64,9 +64,9 @@ def get_observations(df):
                 instances -= 1
 
         """check if there is enough observations for this country"""
-        #TODO decide if this is enough
-        if instances >= 4:
-            all_suicide_dict[country] = suicide_dict_country
-        else:
-            new_countries.remove(country)
-    return all_suicide_dict, set(new_countries)
+        # #TODO decide if this is enough
+        # if instances >= 4:
+        all_suicide_dict[country] = suicide_dict_country
+        # else:
+        #     new_countries.remove(country)
+    return all_suicide_dict #, set(new_countries)

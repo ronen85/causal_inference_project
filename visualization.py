@@ -90,3 +90,14 @@ def graph_eff_by_country(countries, suicide_dict, sex, age):
     plt.axhline(y=-1, color='k', linestyle='--')
     # plt.show()
     mp.savefig('./graphs/by_country/' + sex + '_' + age + '.pdf')
+
+
+def bar_graph(category, age_grp, sex, x, y):
+
+    plt.figure(1)
+    plt.title("Change in Suicide Rates in %s Countries; %s ages %s" % (category, sex, age_grp))
+    plt.ylabel('ATE = Y1 - Y0')
+    plt.xlabel('Years')
+    barlist = plt.bar(range(len(x)), x, align='center')
+    plt.xticks(range(len(x)), y, rotation='vertical')
+    plt.show()
