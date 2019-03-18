@@ -82,9 +82,9 @@ def feature_modification(original_df):
 
 def split_dataframe(original_df):
     """split df by: male, female and by age"""
-    df_m = original_df[original_df.sex == 'male']
-    df_f = original_df[original_df.sex == 'female']
     age_groups = ['15-24 years', '25-34 years', '35-54 years', '55-74 years']
+    df_m = original_df[(original_df.sex == 'male') & (original_df.age.isin(age_groups))]
+    df_f = original_df[(original_df.sex == 'female') & (original_df.age.isin(age_groups))]
     df_m_by_age = {}
     df_f_by_age = {}
     for age in age_groups:
@@ -122,13 +122,29 @@ if __name__ == "__main__":
     # ----------------------SPLITTING DATAFRAMES---------------------------------
     """creating new dataframes by features"""
     df_all, df_male, df_female, df_male_by_age, df_female_by_age = split_dataframe(df)
-    # ----------------------OBTAINING COUNTRY GRAPHS---------------------------------
-    """visualization of data"""
-    if PARAMETERS['Visualize']:
-        graphs_all_country(df)
-        graphs_by_country(df, 'France', 'male')
 
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
+    """get graphs of ate per year for participants"""
+    WC_suicide_dict_m = get_observations(df_male)
+    WC_suicide_dict_f = get_observations(df_female)
+    M_participant_ate, F_participant_ate = [], []
+    for year in WC_years:
+        count = []
+        for country in WC_participants_by_year[year]:
+            if country in WC_suicide_dict_m:
+                if WC_suicide_dict_m[country][year] != 'no_info':
+                    count.append(WC_suicide_dict_m[country][year].ate)
+        M_participant_ate.append(np.mean(count))
+        count = []
+        for country in WC_participants_by_year[year]:
+            if country in WC_suicide_dict_f:
+                if WC_suicide_dict_f[country][year] != 'no_info':
+                    count.append(WC_suicide_dict_f[country][year].ate)
+        F_participant_ate.append(np.mean(count))
+
+    bar_graph('Participating', 'All', 'Male', M_participant_ate, WC_years)
+    bar_graph('Participating', 'All', 'Female', F_participant_ate, WC_years)
+
     # """get graphs of ate per Country in specific year"""
     # for age_grp in df_male_by_age:
     #     for sex in df_all:
@@ -184,17 +200,16 @@ if __name__ == "__main__":
     #         bar_graph('Winning', age_grp, sex, winner_ate, WC_years)
     #         bar_graph('Hosting', age_grp, sex, hosts_ate, WC_years)
 
-    """get graphs of ate for specific Country for all years"""
-    """Specific Country"""
-    country = "Brazil"
-    for age_grp in df_male_by_age:
-        for sex in df_all:
-            WC_suicide_dict = get_observations(df_all[sex][age_grp][df_all[sex][age_grp].country == 'Brazil'])
-            count = []
-            for year in WC_years:
-                if country in WC_suicide_dict:
-                    if WC_suicide_dict[country][year] != 'no_info':
-                        count.append(WC_suicide_dict[country][year].ate)
-
-            bar_graph('Country', age_grp, sex, count, WC_years, None, country)
+    # """get graphs of ate for specific Country for all years"""
+    # country = "Brazil"
+    # for age_grp in df_male_by_age:
+    #     for sex in df_all:
+    #         WC_suicide_dict = get_observations(df_all[sex][age_grp][df_all[sex][age_grp].country == 'Brazil'])
+    #         count = []
+    #         for year in WC_years:
+    #             if country in WC_suicide_dict:
+    #                 if WC_suicide_dict[country][year] != 'no_info':
+    #                     count.append(WC_suicide_dict[country][year].ate)
+    #
+    #         bar_graph('Country', age_grp, sex, count, WC_years, None, country)
     print()
