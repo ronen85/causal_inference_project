@@ -18,6 +18,3 @@ def clean_zeros(df):
     return
 
 
-def cat2num():
-    return
-
