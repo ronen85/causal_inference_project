@@ -125,27 +125,29 @@ if __name__ == "__main__":
 
     # ----------------------OBTAINING SUICIDE INFORMATION---------------------------------
     """get graphs of ate per year for participants"""
-    WC_suicide_dict_m = get_observations(df_male)
-    WC_suicide_dict_f = get_observations(df_female)
-    M_participant_ate, F_participant_ate = [], []
-    for year in WC_years:
-        count = []
-        for country in WC_participants_by_year[year]:
-            if country in WC_suicide_dict_m:
-                if WC_suicide_dict_m[country][year] != 'no_info':
-                    count.append(WC_suicide_dict_m[country][year].ate)
-        M_participant_ate.append(np.mean(count))
-        count = []
-        for country in WC_participants_by_year[year]:
-            if country in WC_suicide_dict_f:
-                if WC_suicide_dict_f[country][year] != 'no_info':
-                    count.append(WC_suicide_dict_f[country][year].ate)
-        F_participant_ate.append(np.mean(count))
+    # df_male = df_male[(df_male.country != 'Japan') & (df_male.country != 'Republic of Korea')]
+    # df_female = df_female[(df_female.country != 'Japan') & (df_female.country != 'Republic of Korea')]
 
-    bar_graph('Participating', 'All', 'Male', M_participant_ate, WC_years)
-    bar_graph('Participating', 'All', 'Female', F_participant_ate, WC_years)
+    # WC_suicide_dict_m = get_observations(df_male)
+    # WC_suicide_dict_f = get_observations(df_female)
+    # M_participant_ate, F_participant_ate = [], []
+    # for year in WC_years:
+    #     count = []
+    #     country = WC_dict[year]
+    #     if country in WC_suicide_dict_m:
+    #         if WC_suicide_dict_m[country][year] != 'no_info':
+    #             count.append(WC_suicide_dict_m[country][year].ate)
+    #     M_participant_ate.append(np.mean(count))
+    #     count = []
+    #     if country in WC_suicide_dict_f:
+    #         if WC_suicide_dict_f[country][year] != 'no_info':
+    #             count.append(WC_suicide_dict_f[country][year].ate)
+    #     F_participant_ate.append(np.mean(count))
+    #
+    # bar_graph('Hosting', 'All', 'Male', M_participant_ate, WC_years)
+    # bar_graph('Hosting', 'All', 'Female', F_participant_ate, WC_years)
 
-    # """get graphs of ate per Country in specific year"""
+    """get graphs of ate per Country in specific year"""
     # for age_grp in df_male_by_age:
     #     for sex in df_all:
     #         WC_suicide_dict = get_observations(df_all[sex][age_grp])
@@ -160,7 +162,7 @@ if __name__ == "__main__":
     #
     #             bar_graph('Global', age_grp, sex, count, country_list, year)
     #
-    # """get graphs of ate per year for participants/finalists/winners by gender and age group"""
+    """get graphs of ate per year for participants/finalists/winners by gender and age group"""
     # for age_grp in df_male_by_age:
     #     for sex in df_all:
     #         WC_suicide_dict = get_observations(df_all[sex][age_grp])
@@ -200,7 +202,7 @@ if __name__ == "__main__":
     #         bar_graph('Winning', age_grp, sex, winner_ate, WC_years)
     #         bar_graph('Hosting', age_grp, sex, hosts_ate, WC_years)
 
-    # """get graphs of ate for specific Country for all years"""
+    """get graphs of ate for specific Country for all years"""
     # country = "Brazil"
     # for age_grp in df_male_by_age:
     #     for sex in df_all:
